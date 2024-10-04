@@ -1,0 +1,60 @@
+
+from enum import Enum
+
+class BackboneArch(Enum):
+    IMAGENET_RN50 = "IMAGENET_RN50"
+    IMAGENET_RN18 = "IMAGENET_RN18"
+    IMAGENET_RN18_MULTI = "IMAGENET_RN18_MULTI"
+    IMAGENET_RN50_SIMCLR = "IMAGENET_RN50_SIMCLR"
+    SVHN_CNN = "SVHN_CNN"
+    MNIST_LENET = "MNIST_LENET"
+    SUDOKUNET = "SUDOKUNET"
+    IMAGENET_RN18_SUDOKUNET = "IMAGENET_RN18_SUDOKUNET"
+    IMAGENET_RN50_SUDOKUNET = "IMAGENET_RN50_SUDOKUNET"
+    LENET = "LENET"
+    LENET_MULTI = "LENET_MULTI"
+    IMAGENET_ALEXNET = "IMAGENET_ALEXNET"
+    SVHN_MULTI = "SVHN_MULTI"
+    SUDOKUNET_NASP = "SUDOKUNET_NASP"
+
+IS_MULTI = [BackboneArch.IMAGENET_RN18_MULTI, BackboneArch.LENET_MULTI, BackboneArch.SVHN_MULTI]
+IS_WHOLE = [BackboneArch.SUDOKUNET, BackboneArch.IMAGENET_RN18_SUDOKUNET, BackboneArch.IMAGENET_RN50_SUDOKUNET, BackboneArch.SUDOKUNET_NASP]
+
+
+class Datasets(Enum):
+    VSUDOKU_APP = "Visual Sudoku - Assistant App"
+    VSUDOKU_MNIST = "Visual Sudoku - MNIST"
+    VSUDOKU_EMNIST = "Visual Sudoku - EMNIST"
+    VSUDOKU_NEURASP = "Visual Sudoku - NeurASP"
+    VSUDOKU_APP_UL = "Visual Sudoku - App unlabaled"
+
+class ImbalancePolicy(Enum):
+    UPSAMPLING = 'UPSAMPLING'
+    DOWNSAMPLING = 'DOWNSAMPLING'
+    WEIGHTEDCE = 'WEIGHTEDCE'
+
+class CalibrationType(Enum):
+    TEMPERATURE = 'temperature'
+    VECTOR = 'vector'
+    MATRIX = 'matrix'
+    DIRICHLET = 'dirichlet'
+    NONE = 'none'
+
+class DFLMethod(Enum):
+    IDENTITY_REGRET = 'IDENTITY_REGRET'
+    IDENTITY_HAMMING = 'IDENTITY_HAMMING'
+    REGULARIZATION = 'REGULARIZATION'
+    SPO = 'SPO'
+    NCE = 'NCE'
+    SCE = 'SCE'
+    NCE_LW = 'NCE_LW'
+    DBB_REGRET = 'DBB_REGRET'
+    DBB_HAMMING = 'DBB_HAMMING'
+    CROSSENTROPY = 'CROSSENTROPY'
+    FOCALLOSS = 'FOCALLOSS'
+    DFZ = 'DFZ'
+
+class OutputLayer(Enum): 
+    SHARED = 'SHARED'
+    PATCH = 'PATCH'
+    CORR = 'CORR'
