@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "pbcs"
+version = "0.1.0"
+description = "Implementation of methods and experiments for the paper Perception-based Constraint Solving for Sudoku Images"
+authors = ["Maxime Mulamba <maxime.mulamba@vub.be>"]
+readme = "readme.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+clingo = "^5.6.2"
+cpmpy = "0.9.18"
+einops = "^0.8.0"
+lightning = "^2.3.3"
+matplotlib = "^3.9.2"
+opencv-python-headless = "4.10.0.84"
+pandas = "^2.2.3"
+seaborn = "^0.13.2"
+torch = "2.3.1"
+torchmetrics = "1.4.0"
+torchvision = "0.18.1"
+tqdm = "^4.66.6"
+scikit-learn = "^1.5.2"
+pyswip = "^0.3.2"
+pytest = "^8.3.5"
+numpy = "^1.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
