@@ -30,3 +30,13 @@ This repository provides the code to reproduce the experiments described in the 
 [Download the data](https://rdr.kuleuven.be/dataset.xhtml?persistentId=doi:10.48804/3SUHHR) and follow instructions to extract it within a `data/` folder. 
 
 Check that the data is correctly extracted by running `pytest` at project root level. Tests in `test_databuilder.py` should all pass. 
+
+## Experiments 
+
+Use `exp_joint_inf.py` to train a neural network (NN) and run an evaluation on the test. Trained NN are stored automatically in their respective subfolder under `output/`. You can [download](https://github.com/CryoCardiogram/perception-based-constraint-solving/releases/tag/v0.1.0) weights of pretrained backbone in the release and place them under a `weights/` folder to speed-up training. 
+
+Use `exp_calibration.py` to calibrate a pretrained model. 
+
+Run either of those scripts with the `--help` option for a detailed explanation about their usage. 
+
+## Citation
