@@ -169,7 +169,7 @@ class FontStyle(PBCSweightedCE):
         # manually compute solve-accuracy here:
         if testing:
             if log and eval_output[f"{str_eval_type}_grid_accuracy_solve"] < 1:
-                logger.log(
+                logger.info(
                     "pred_digit",
                     torch.argmax(
                         dnn_output["predictions_digit"].reshape(*target_shape, -1), -1
@@ -190,7 +190,7 @@ class FontStyle(PBCSweightedCE):
                     sep="\n",
                 )
                 if "wiped" in cs_output:
-                    logger.log(
+                    logger.info(
                         "wildcard?",
                         cs_output["perception"].reshape(B, *self.puzzle_shape),
                     )
@@ -202,15 +202,15 @@ class FontStyle(PBCSweightedCE):
                     pathlib.Path(self.logger.log_dir, f"not-solved_{batch_idx}.pt"),
                 )
                 if "incorrect" in target:
-                    logger.log("incorrect(s)")
+                    logger.info("incorrect(s)")
                     index_corr = target["incorrect"]
-                    logger.log(
+                    logger.info(
                         "original:",
                         target["cs_output"]["solution"].reshape(B, *self.puzzle_shape)[
                             index_corr[:, :, 0], index_corr[:, :, 1]
                         ],
                     )
-                    logger.log(
+                    logger.info(
                         "corrupted:",
                         target["label"].reshape(B, *self.puzzle_shape)[
                             index_corr[:, :, 0], index_corr[:, :, 1]
