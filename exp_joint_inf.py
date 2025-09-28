@@ -24,11 +24,14 @@ from constraint_solver.sudoku_solver import (
     SudokuSolver,
 )
 from constraint_solver.sudoku_solver_nasp import SudokuSolverNeurASP
+import logging
+
+logger = logging.getLogger(__file__)
 
 try:
     from constraint_solver.sudoku_solver_prolog import SudokuSolverProlog
 except Exception:
-    print("cannot use Prolog-based solver. Need to install SWI-Prolog")
+    logger.warning("cannot use Prolog-based solver. Need to install SWI-Prolog")
 from constraint_solver.sudoku_solver import (
     ObjectiveHCOP,
     ObjectivePrintedOnly,
@@ -86,6 +89,7 @@ def parse_args():
     parser.add_argument(
         "--obfun",
         type=int,
+        required=True,
         default=[],
         nargs="+",
         help="0: regular, 1: wipe, 2: weighted, 3: wildcard,  4: neurasp-solver, 5: swipl (nasr)",
@@ -109,7 +113,7 @@ def parse_args():
         type=int,
         help="sequence of seeds for kfolds. Default [544]",
     )
-    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--lr", type=float, default=None, required=True)
     parser.add_argument(
         "--wildcard_tr",
         type=float,
@@ -169,8 +173,8 @@ def parse_args():
 def main(args):
     N_CLASSES = 19
     PUZZLE_SHAPE = (9, 9)
-
-    print("setup trainer")
+    logger = logging.getLogger(__file__)
+    logger.info("setup trainer")
     ## setup model trainer
     model_builder = FontStyle
     splitter = torch.nn.Identity()
@@ -218,7 +222,7 @@ def main(args):
         raise NotImplementedError
 
     ## Solvers
-    print("init solvers")
+    logger.info("init solvers")
     max_iter = 100 if args["no_good"] else 1
     cs = SudokuSolver(
         PUZZLE_SHAPE,
@@ -286,9 +290,9 @@ def main(args):
         c_train = Counter(train_dl.dataset.y.flatten().tolist())
         c_valid = Counter(valid_dl.dataset.y.flatten().tolist())
         c_test = Counter(test_dl.dataset.y.flatten().tolist())
-        print("counter train: ", c_train)
-        print("counter valid:", c_valid)
-        print("counter test:", c_test)
+        logger.debug("counter train: ", c_train)
+        logger.debug("counter valid:", c_valid)
+        logger.debug("counter test:", c_test)
 
         if args["backbone"] not in IS_WHOLE:
             splitter = GridSplitter(PUZZLE_SHAPE, torch.nn.Identity())
@@ -309,7 +313,7 @@ def main(args):
         conf_dir = str(pathlib.Path(logdir, conf_name).resolve())
         pathlib.Path(conf_dir).mkdir(parents=True, exist_ok=True)
 
-        logger = CSVLogger(
+        train_logger = CSVLogger(
             save_dir=logdir,
             name=conf_dir,
             version=version,
@@ -322,7 +326,7 @@ def main(args):
         es = EarlyStopping("val_cell_accuracy", mode="max", patience=5)
 
         trainer = pl.Trainer(
-            logger=logger,
+            logger=train_logger,
             max_epochs=args["max_total_epochs"],
             log_every_n_steps=5,
             callbacks=[es],
@@ -339,7 +343,7 @@ def main(args):
 
             net = model.dnn
         elif args["calibration"] is not None:
-            print("debug loading calibration?")
+            logger.debug("debug loading calibration?")
             # use calibration wrapper to get proper cnn
             temp_model = CalibrationOnly(
                 net,
@@ -360,16 +364,18 @@ def main(args):
             )
 
             incompat = load_pretrain(conf_calib, version, net)
-            print(f"debug loaded pretrain weights, except for layers {incompat}")
+            logger.debug(f"debug loaded pretrain weights, except for layers {incompat}")
             model.dnn = temp_model.dnn
 
         else:
             incompat = load_pretrain(conf, version, net)
-            print(f"pretrained weights loaded successfully, except for {incompat}")
+            logger.debug(
+                f"pretrained weights loaded successfully, except for {incompat}"
+            )
             model.dnn = net
 
         model.save_hyperparameters(conf)
-        print(model)
+        logger.info(model)
         # print(model.dnn)
         # trainer.validate(model,valid_dl )
         if args["validation"]:
@@ -382,13 +388,13 @@ def main(args):
 
 if __name__ == "__main__":
     args = parse_args()
-    print("debug exp solve  args", args)
     # parallelize runs
     hparams = []
     for param in itertools.product(
         args["seeds"], args["obfun"], args["backbone"], args["calibration"]
     ):
         input_dict = OrderedDict(**args)
+        print(input_dict)
         input_dict.update(
             {
                 "seeds": [param[0]],
@@ -397,7 +403,8 @@ if __name__ == "__main__":
                 "calibration": param[3],
             }
         )
-        hparams.append(input_dict)
-    print(hparams)
+        print(input_dict)
+        # hparams.append(input_dict)
+        main(input_dict)
 
-    launch_jobs(args["n_workers"], main, hparams)
+    # launch_jobs(args["n_workers"], main, hparams)
