@@ -89,6 +89,7 @@ def parse_args():
     parser.add_argument(
         "--obfun",
         type=int,
+        required=True,
         default=[],
         nargs="+",
         help="0: regular, 1: wipe, 2: weighted, 3: wildcard,  4: neurasp-solver, 5: swipl (nasr)",
@@ -112,7 +113,7 @@ def parse_args():
         type=int,
         help="sequence of seeds for kfolds. Default [544]",
     )
-    parser.add_argument("--lr", type=float, default=None)
+    parser.add_argument("--lr", type=float, default=None, required=True)
     parser.add_argument(
         "--wildcard_tr",
         type=float,
@@ -312,7 +313,7 @@ def main(args):
         conf_dir = str(pathlib.Path(logdir, conf_name).resolve())
         pathlib.Path(conf_dir).mkdir(parents=True, exist_ok=True)
 
-        logger = CSVLogger(
+        train_logger = CSVLogger(
             save_dir=logdir,
             name=conf_dir,
             version=version,
@@ -325,7 +326,7 @@ def main(args):
         es = EarlyStopping("val_cell_accuracy", mode="max", patience=5)
 
         trainer = pl.Trainer(
-            logger=logger,
+            logger=train_logger,
             max_epochs=args["max_total_epochs"],
             log_every_n_steps=5,
             callbacks=[es],
@@ -393,6 +394,7 @@ if __name__ == "__main__":
         args["seeds"], args["obfun"], args["backbone"], args["calibration"]
     ):
         input_dict = OrderedDict(**args)
+        print(input_dict)
         input_dict.update(
             {
                 "seeds": [param[0]],
@@ -401,6 +403,8 @@ if __name__ == "__main__":
                 "calibration": param[3],
             }
         )
-        hparams.append(input_dict)
+        print(input_dict)
+        # hparams.append(input_dict)
+        main(input_dict)
 
-    launch_jobs(args["n_workers"], main, hparams)
+    # launch_jobs(args["n_workers"], main, hparams)
