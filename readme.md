@@ -40,7 +40,8 @@ Use `exp_calibration.py` to calibrate a pretrained model.
 Run either of those scripts with the `--help` option for a detailed explanation about their usage. 
 
 ## Citation
-´´´
+
+```bibtex
 @article{mulamba2024perception,
   title={Perception-based constraint solving for sudoku images},
   author={Mulamba, Maxime and Mandi, Jayanta and Mahmuto{\u{g}}ullar{\i}, Ali {\.I}rfan and Guns, Tias},
@@ -51,4 +52,4 @@ Run either of those scripts with the `--help` option for a detailed explanation 
   year={2024},
   publisher={Springer}
 }
-´´´
+```
